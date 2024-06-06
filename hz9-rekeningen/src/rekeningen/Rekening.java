@@ -1,53 +1,44 @@
 package rekeningen;
 
-abstract class Rekening {
+public abstract class Rekening {
 	
-	int balans;
-
-	abstract int deposit(int amount);
-	abstract int withdraw(int amount);
+	private int balans;
 	
-
-}
-
-class Zichtrekening extends Rekening {
-	
-	int kredietlimiet;
-	
-	Zichtrekening(int kredietlimiet) {
-		this.kredietlimiet = kredietlimiet;
-	}
-
-	@Override
-	int deposit(int amount) {
-		return 0;
-	}
-
-	@Override
-	int withdraw(int amount) { 
-		if (balans+kredietlimiet < amount) {
-			int withdraw = balans+kredietlimiet;
-			balans = -kredietlimiet;
-			return withdraw;
-		}
-		else {
-			balans -= amount;
-			return amount;
-		}
+	public int getBalans() {
+		return balans;
 	}
 	
-}
-
-class Spaarrekening extends Rekening {
-
-	@Override
-	int deposit(int amount) {
-		return 0;
+	public Rekening() {
+		balans = 0;
 	}
-
-	@Override
-	int withdraw(int amount) {
-		return 0;
+	/**
+	 * @post | getBalans() == balans
+	 */
+	protected void setBalans(int balans) {
+		this.balans = balans;
 	}
-	
+	/**
+	 * @pre | 0 <= amount
+	 * @post | getBalans() == old(getBalans()) + amount
+	 */
+	public void deposit(int amount) {
+		balans += amount;
+	}
+	/**
+	 * @pre | 0 <= amount
+	 * @post | 0 <= result
+	 * @post | result <= amount
+	 * @post | getBalans() == old(getBalans()) - result
+	 */
+	public abstract int withdraw(int amount);
+	/**
+	 * @post | result != null
+	 */
+	public abstract String toString();
+	/**
+	 * @inspects | this, r
+	 * @pre | r != null
+	 * @post | !result || getBalans() == r.getBalans()
+	 */
+	public abstract boolean same(Rekening r);
 }
